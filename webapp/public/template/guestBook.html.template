@@ -10,9 +10,8 @@
   Guest Book
   <h1>
   <hr id="bottomLine"/>
-  <form action="logout" method="post">
-    <button type="submit">Logout</button>
-  </form>
+  <div id="userName">${userName}</div>
+  <div id="logoutButton">${logout}</div>
   <h1>Leave a comment</h1>
   <form action="inputComment" name="commentForm" method="POST">
     Name:
@@ -26,6 +25,6 @@
   <hr />
   DATETIME_NAME_COMMENTS_LIST
   <hr />
-  <div id="showComments"></div>
+  <div id="showComments">${comments}</div>
 </body>
 </html>

@@ -36,22 +36,22 @@ const makeCommentObject=(querystring, dateAndTime)=>{
 
 const saveCommmments=function(req){
   console.log('saving comments');
-    let dateAndTime=new Date().toLocaleString();
-    let commentObj=new Resource('comments.txt');
-    let comments=JSON.parse(fs.readFileSync(commentObj.getFilePath(),commentObj.getEncoding()));
-    comments.push(makeCommentObject(req.queryString,dateAndTime));
-    fs.writeFileSync(commentObj.getFilePath(),JSON.stringify(comments));
+  let dateAndTime=new Date().toLocaleString();
+  let commentObj=new Resource('comments.txt');
+  let comments=JSON.parse(fs.readFileSync(commentObj.getFilePath(),commentObj.getEncoding()));
+  comments.push(makeCommentObject(req.queryString,dateAndTime));
+  fs.writeFileSync(commentObj.getFilePath(),JSON.stringify(comments));
 };
 
 let toS = o=>JSON.stringify(o,null,2);
 
 let logRequest = (req,res)=>{
   let text = ['------------------------------',
-    `${timeStamp()}`,
-    `${req.method} ${req.url}`,
-    `HEADERS=> ${toS(req.headers)}`,
-    `COOKIES=> ${toS(req.cookies)}`,
-    `BODY=> ${toS(req.body)}`,''].join('\n');
+  `${timeStamp()}`,
+  `${req.method} ${req.url}`,
+  `HEADERS=> ${toS(req.headers)}`,
+  `COOKIES=> ${toS(req.cookies)}`,
+  `BODY=> ${toS(req.body)}`,''].join('\n');
   fs.appendFile('request.log',text,()=>{});
 
   console.log(`${req.method} ${req.url}`);
@@ -117,11 +117,28 @@ app.post('/logout',(req,res)=>{
   res.redirect('/guestBook.html');
 });
 
+const insertLogoutButton=function(pageTemplate,textToreplace){
+  let logoutButton=`<form action="logout" method="post"><button type="submit">Logout</button></form>`;
+  return pageTemplate.replace(textToreplace,logoutButton);
+}
+
+const addUserName=function(pageTemplate, textToreplace, userName){
+  let userNameText=`User: ${userName}`;
+  return pageTemplate.replace(textToreplace, userNameText);
+}
+
 app.get('/guestBook.html',(req,res)=>{
   res.setHeader('Content-type','text/html');
   let comments=fs.readFileSync('./webapp/data/comments.txt','utf8');
   let guestTemplate=fs.readFileSync('./webapp/public/template/guestBook.html.template','utf8');
   guestPageSrc=addCommentsToGuestPage(guestTemplate,comments);
+  if(!req.user){
+    guestPageSrc=guestPageSrc.replace('${logout}','');
+    guestPageSrc=guestPageSrc.replace('${userName}','');
+  }else{
+    guestPageSrc=addUserName(guestPageSrc,'${userName}',req.user.userName);
+    guestPageSrc=insertLogoutButton(guestPageSrc, '${logout}');
+  }
   res.write(guestPageSrc);
   res.end();
 });

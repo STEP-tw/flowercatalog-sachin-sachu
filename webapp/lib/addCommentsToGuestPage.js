@@ -9,7 +9,7 @@ const addCommentsToGuestPage=function(guestPageSrc, commentFileContent){
       acc+=commentRow;
       return acc;
     },'');
-    let newGuestPage=guestPageSrc.replace('\"showComments\"\>',pageSource);
+    let newGuestPage=guestPageSrc.replace('${comments}',pageSource);
     return newGuestPage;
 };
 exports.addCommentsToGuestPage=addCommentsToGuestPage;
