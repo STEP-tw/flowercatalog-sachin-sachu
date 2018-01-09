@@ -122,22 +122,46 @@ const insertLogoutButton=function(pageTemplate,textToreplace){
   return pageTemplate.replace(textToreplace,logoutButton);
 }
 
+const insertLoginButton=function(pageTemplate,textToreplace){
+  // let loginButton=`<form action="login.html" method="get"><button type="submit">Login</button></form>`;
+  let loginButton= `<button onclick="window.location.href='/login.html'">Login</button>`;
+  return pageTemplate.replace(textToreplace,loginButton);
+}
+
 const addUserName=function(pageTemplate, textToreplace, userName){
   let userNameText=`User: ${userName}`;
   return pageTemplate.replace(textToreplace, userNameText);
+}
+
+const addCommentTextbox=function(pageTemplate, textToreplace){
+  let commentTextbox=`<h1>Leave a comment</h1>
+  <form action="inputComment" name="commentForm" method="POST">
+    Name:
+    <input type="text" name="name" required></input>
+    <br />
+    Comment:
+    <textarea rows="10" cols="60" name="comment" required></textarea>
+    <br />
+    <input type="submit" id="submitButton" value="submit" />
+  </form>`;
+  return pageTemplate.replace(textToreplace, commentTextbox);
 }
 
 app.get('/guestBook.html',(req,res)=>{
   res.setHeader('Content-type','text/html');
   let comments=fs.readFileSync('./webapp/data/comments.txt','utf8');
   let guestTemplate=fs.readFileSync('./webapp/public/template/guestBook.html.template','utf8');
-  guestPageSrc=addCommentsToGuestPage(guestTemplate,comments);
+  guestPageSrc=addCommentsToGuestPage(guestTemplate,'${comments}',comments);
   if(!req.user){
+    guestPageSrc=insertLoginButton(guestPageSrc,'${login}');
     guestPageSrc=guestPageSrc.replace('${logout}','');
     guestPageSrc=guestPageSrc.replace('${userName}','');
+    guestPageSrc=guestPageSrc.replace('${addComments}','');
   }else{
+    guestPageSrc=guestPageSrc.replace('${login}','');
     guestPageSrc=addUserName(guestPageSrc,'${userName}',req.user.userName);
     guestPageSrc=insertLogoutButton(guestPageSrc, '${logout}');
+    guestPageSrc=addCommentTextbox(guestPageSrc, '${addComments}');
   }
   res.write(guestPageSrc);
   res.end();

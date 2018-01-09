@@ -1,4 +1,4 @@
-const addCommentsToGuestPage=function(guestPageSrc, commentFileContent){
+const addCommentsToGuestPage=function(guestPageSrc,textToreplace, commentFileContent){
     let comments=JSON.parse(commentFileContent);
     let pageSource='';
     pageSource+=comments.reverse().reduce((acc,comment)=>{
@@ -9,7 +9,7 @@ const addCommentsToGuestPage=function(guestPageSrc, commentFileContent){
       acc+=commentRow;
       return acc;
     },'');
-    let newGuestPage=guestPageSrc.replace('${comments}',pageSource);
+    let newGuestPage=guestPageSrc.replace(textToreplace,pageSource);
     return newGuestPage;
 };
 exports.addCommentsToGuestPage=addCommentsToGuestPage;

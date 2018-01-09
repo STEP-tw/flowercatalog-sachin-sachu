@@ -12,16 +12,8 @@
   <hr id="bottomLine"/>
   <div id="userName">${userName}</div>
   <div id="logoutButton">${logout}</div>
-  <h1>Leave a comment</h1>
-  <form action="inputComment" name="commentForm" method="POST">
-    Name:
-    <input type="text" name="name" required></input>
-    <br />
-    Comment:
-    <textarea rows="10" cols="60" name="comment" required></textarea>
-    <br />
-    <input type="submit" id="submitButton" value="submit" />
-  </form>
+  <div id="loginButton">${login}</div>
+  <div id="addComment">${addComments}</div>
   <hr />
   DATETIME_NAME_COMMENTS_LIST
   <hr />
