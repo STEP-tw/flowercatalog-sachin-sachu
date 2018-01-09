@@ -1,0 +1,24 @@
+#heading {
+  text-align: center;
+  font-size: 45px;
+  margin-right: 175px;
+  color: #ffcc00;
+}
+
+#bottomLine {
+  margin-bottom: 25px;
+  align:center;
+  width: 75%;
+	height: 10px;
+	border: 0;
+	box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}
+
+#description {
+  margin-left: 35px;
+  margin-right: 5px;
+}
+
+.contents {
+  font-size: 18px;
+}
