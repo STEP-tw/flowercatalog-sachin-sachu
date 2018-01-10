@@ -7,6 +7,10 @@ modifyGuestbook.prototype={
     return guestPageTemplate.replace(textToreplace,logoutButton);
   },
 
+  removeText:function(guestPageTemplate,textToremove){
+    return guestPageTemplate.replace(textToremove,'');
+  },
+
   insertLoginButton:function(guestPageTemplate,textToreplace){
     let loginButton= `<button onclick="window.location.href='/login.html'">Login</button>`;
     return guestPageTemplate.replace(textToreplace,loginButton);

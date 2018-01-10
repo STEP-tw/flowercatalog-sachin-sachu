@@ -117,35 +117,6 @@ app.post('/logout',(req,res)=>{
   res.redirect('/guestBook.html');
 });
 
-const insertLogoutButton=function(pageTemplate,textToreplace){
-  let logoutButton=`<form action="logout" method="post"><button type="submit">Logout</button></form>`;
-  return pageTemplate.replace(textToreplace,logoutButton);
-}
-
-const insertLoginButton=function(pageTemplate,textToreplace){
-  let loginButton= `<button onclick="window.location.href='/login.html'">Login</button>`;
-  return pageTemplate.replace(textToreplace,loginButton);
-}
-
-const addUserName=function(pageTemplate, textToreplace, userName){
-  let userNameText=`User: ${userName}`;
-  return pageTemplate.replace(textToreplace, userNameText);
-}
-
-const addCommentTextbox=function(pageTemplate, textToreplace){
-  let commentTextbox=`<h1>Leave a comment</h1>
-  <form action="inputComment" name="commentForm" method="POST">
-  Name:
-  <input type="text" name="name" required></input>
-  <br />
-  Comment:
-  <textarea rows="10" cols="60" name="comment" required></textarea>
-  <br />
-  <input type="submit" id="submitButton" value="submit" />
-  </form>`;
-  return pageTemplate.replace(textToreplace, commentTextbox);
-}
-
 app.get('/guestBook.html',(req,res)=>{
   res.setHeader('Content-type','text/html');
   let comments=fs.readFileSync('./webapp/data/comments.txt','utf8');
@@ -154,11 +125,11 @@ app.get('/guestBook.html',(req,res)=>{
   let guestPageSrc=modifyGuest.addCommentsToGuestPage(guestTemplate,'${comments}',comments);
   if(!req.user){
     guestPageSrc=modifyGuest.insertLoginButton(guestPageSrc,'${login}');
-    guestPageSrc=guestPageSrc.replace('${logout}','');
-    guestPageSrc=guestPageSrc.replace('${userName}','');
-    guestPageSrc=guestPageSrc.replace('${addComments}','');
+    guestPageSrc=modifyGuest.removeText(guestPageSrc,'${logout}');
+    guestPageSrc=modifyGuest.removeText(guestPageSrc,'${userName}');
+    guestPageSrc=modifyGuest.removeText(guestPageSrc,'${addComments}');
   }else{
-    guestPageSrc=guestPageSrc.replace('${login}','');
+    guestPageSrc=modifyGuest.removeText(guestPageSrc,'${login}');
     guestPageSrc=modifyGuest.addUserName(guestPageSrc,'${userName}',req.user.userName);
     guestPageSrc=modifyGuest.insertLogoutButton(guestPageSrc,'${logout}');
     guestPageSrc=modifyGuest.addCommentTextbox(guestPageSrc,'${addComments}');
