@@ -1,6 +1,6 @@
 const toKeyValue = kv=>{
-    let parts = kv.split('=');
-    return {key:parts[0].trim(),value:parts[1].trim()};
+  let parts = kv.split('=');
+  return {key:parts[0].trim(),value:parts[1].trim()};
 };
 const accumulate = (o,kv)=> {
   o[kv.key] = kv.value;
@@ -24,15 +24,24 @@ let invoke = function(req,res){
   let handler = this._handlers[req.method][req.url];
   if(!handler){
     res.statusCode = 404;
-    res.write('File not found!');
+    let errorMessage=`Oops... File not found!!\nYou tried to access "${req.url}"`;
+    res.write(errorMessage);
     res.end();
     return;
   }
   handler(req,res);
 }
+let postProcessor = function(req, res){
+  if(req.urlIsOneOf(this._postprocess)){
+    this._postHandler(req, res);
+    return;
+  }
+}
 const initialize = function(){
   this._handlers = {GET:{},POST:{}};
   this._preprocess = [];
+  this._postprocess = [];
+  this._postHandler= {};
 };
 const get = function(url,handler){
   this._handlers.GET[url] = handler;
@@ -42,6 +51,10 @@ const post = function(url,handler){
 };
 const use = function(handler){
   this._preprocess.push(handler);
+};
+const getStatic = function(reqArray,handler){
+  this._postprocess=reqArray;
+  this._postHandler=handler;
 };
 let urlIsOneOf = function(urls){
   return urls.includes(this.url);
@@ -62,7 +75,10 @@ const main = function(req,res){
       middleware(req,res);
     });
     if(res.finished) return;
+    postProcessor.call(this,req,res);
+    if(res.finished) return;
     invoke.call(this,req,res);
+
   });
 };
 
@@ -74,6 +90,7 @@ let create = ()=>{
   rh.get = get;
   rh.post = post;
   rh.use = use;
+  rh.getStatic = getStatic;
   return rh;
 }
 exports.create = create;
